@@ -1,2 +1,5 @@
 [credential]
 	helper = "!f() { /var/www/.vscode-server/bin/dfd34e8260c270da74b5c2d86d61aee4b6d56977/node /tmp/vscode-remote-containers-8b127f6c6c2ff561ee201e04f56a39665d1d8126.js $*; }; f"
+[user]
+	email = jefersonsr05@gmail.com
+	name = jefersonsr05
