@@ -4,13 +4,13 @@ namespace Tests\Unit;
 
 use Core\Teste;
 use PHPUnit\Framework\TestCase;
-
+//teste jeffs
 class TesteUnitTest extends TestCase
 {
     public function test_call_method_foo()
     {
         $teste = new Teste();
         $response = $teste->foo();
-        $this->assertEquals('123', $response); //teste
+        $this->assertEquals('123', $response);
     }
 }
