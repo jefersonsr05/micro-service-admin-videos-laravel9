@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use Core\Teste;
 use PHPUnit\Framework\TestCase;
-//teste jeffs
+
 class TesteUnitTest extends TestCase
 {
     public function test_call_method_foo()
