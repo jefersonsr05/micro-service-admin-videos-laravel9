@@ -17,3 +17,9 @@ yarn-error.log
 .docker/dbdata/
 /.composer
 /.vscode-server
+.local
+.config
+.local/share/TabNine/team_learning/data_dir/sdb
+.config/TabNine/data.tabnine
+.phpls
+storage/

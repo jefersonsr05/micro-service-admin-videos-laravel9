@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
             CategoryEloquentRepository::class
         );
 
-        /* 
+        /*
         *  DB Transaction
         */
         $this->app->bind(

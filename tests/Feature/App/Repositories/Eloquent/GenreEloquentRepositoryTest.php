@@ -8,7 +8,10 @@ use App\Repositories\Eloquent\GenreEloquentRepository;
 use Core\Domain\Entity\Genre as EntityGenre;
 use Core\Domain\Exception\NotFoundException;
 use Core\Domain\Repository\GenreRepositoryInterface;
+use Core\Domain\ValueObject\Uuid;
+use Ramsey\Uuid\Uuid as RanseyUuid;
 use Tests\TestCase;
+use DateTime;
 
 class GenreEloquentRepositoryTest extends TestCase
 {
@@ -89,6 +92,121 @@ class GenreEloquentRepositoryTest extends TestCase
         $this->assertEquals($genre->id, $response->id());
         $this->assertEquals($genre->name, $response->name);
         
+    }
+
+    public function testFindAll()
+    {
+        $genres = Model::factory()->count(10)->create();
+        $genresDb = $this->repository->findAll();
+        $this->assertEquals(count($genres), count($genresDb))        ;
+    }
+
+    public function testFindAllEmpty()
+    {
+        
+        $genresDb = $this->repository->findAll();
+        $this->assertCount(0, $genresDb);
+    }
+
+    public function testFindAllWithFilter()
+    {
+        $genres = Model::factory()->count(10)->create([
+            'name' => 'Teste'
+        ]);
+        $genres = Model::factory()->count(10)->create();
+
+        $genresDb = $this->repository->findAll(  
+            filter: 'Teste'
+        );
+
+        $this->assertEquals(10, count($genresDb));
+
+        $genresDb = $this->repository->findAll();
+        $this->assertCount(20, $genresDb);
+    }
+
+    public function testPagination()
+    {
+        $genres = Model::factory()->count(60)->create();
+        $response = $this->repository->paginate();
+
+        //dump($response);
+        $this->assertEquals(15, count($response->items()));
+        $this->assertEquals(60, $response->total());
+
+    }
+
+    public function testPaginationEmpty()
+    {
+        $response = $this->repository->paginate();
+
+        //dump($response);
+        $this->assertCount(0, $response->items());
+        $this->assertEquals(0, $response->total());
+
+    }
+
+    public function testUpdate()
+    {
+        $genre = Model::factory()->create();
+        $entity = new EntityGenre(
+            id: new Uuid($genre->id),
+            name: $genre->name,
+            isActive: (bool) $genre->is_Active,
+            createdAt: new DateTime($genre->created_at)
+        );
+
+        $entity->update(
+            name: 'Name Updated'
+        );
+
+        $response = $this->repository->update($entity);
+        $this->assertEquals('Name Updated', $response->name);
+
+        $this->assertDatabaseHas('genres', [
+            'name' => 'Name Updated'
+        ]);
+
+    }
+
+    public function testUpdateNotFound()
+    {
+        $this->expectException(NotFoundException::class);
+
+        $genreId = (string) RanseyUuid::uuid4();
+        $entity = new EntityGenre(
+            id: new Uuid($genreId),
+            name: 'name',
+            isActive: true,
+            createdAt: new DateTime(date('Y-m-d H:i:s'))
+        );
+
+        $entity->update(
+            name: 'Name Updated'
+        );
+
+        $this->repository->update($entity);
+
+    }
+
+    public function testDeleteNotFound()
+    {
+        $this->expectException(NotFoundException::class);
+
+        $this->repository->delete('fake_id');
+    }
+
+    public function testDelete()
+    {
+        $genre = Model::factory()->create();
+        $response = $this->repository->delete($genre->id);
+
+        $this->assertSoftDeleted('genres', [
+            'id' => $genre->id,
+        ]);
+
+        $this->assertTrue($response);
+
     }
 
 }
