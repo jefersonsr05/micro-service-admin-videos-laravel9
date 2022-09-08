@@ -63,7 +63,7 @@ class CategoryApiTest extends TestCase
     {
         $response = $this->getJson("$this->endpoint/fake_value");
         // $response->dump();
-        $response->assertStatus(Response::HTTP_NOT_FOUND);    
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     public function test_list_category()
@@ -71,7 +71,7 @@ class CategoryApiTest extends TestCase
         $category = Category::factory()->create();
         $response = $this->getJson("$this->endpoint/{$category->id}");
         // $response->dump();
-        $response->assertStatus(Response::HTTP_OK);   
+        $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
             'data' => [
                 'id',
@@ -131,7 +131,7 @@ class CategoryApiTest extends TestCase
             'id' => $response['data']['id'],
             'is_active' => false,
         ]);
-        
+
     }
 
     public function test_notfound_update()
@@ -140,7 +140,6 @@ class CategoryApiTest extends TestCase
             'name' => 'new Category'
         ];
         $response = $this->putJson("{$this->endpoint}/{fake_id}", $data);
-        $response->dump();
         $response->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
